@@ -6,6 +6,7 @@ from src.render import render_message
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
+from src.fuzzyfinder import fuzzyfinder
 
 
 class DenoScriptsExtension(Extension):
@@ -26,20 +27,31 @@ class DenoScriptsExtension(Extension):
         if len(self.scripts.scripts) == 0:
             return render_message("No Scripts", "No scripts found")
 
-        return RenderResultListAction(
-            [
-                ExtensionResultItem(
-                    icon="images/deno-scripts.png",
-                    name=script["name"],
-                    description=script["description"],
-                    on_enter=ExtensionCustomAction(
-                        {
-                            "action": "run-script",
-                            "script": script["id"],
-                        },
-                        True,
-                    ),
-                )
-                for script in self.scripts.scripts
-            ]
+        options = [
+            ExtensionResultItem(
+                icon="images/deno-scripts.png",
+                name=script["name"],
+                description=script["description"],
+                on_enter=ExtensionCustomAction(
+                    {
+                        "action": "run-script",
+                        "script": script["id"],
+                    },
+                    True,
+                ),
+            )
+            for script in self.scripts.scripts
+        ]
+
+        if not query:
+            return RenderResultListAction(options)
+
+        items: list[ExtensionResultItem] = list(
+            fuzzyfinder(
+                query,
+                options,
+                accessor=lambda item: item.get_name(),
+            )
         )
+
+        return RenderResultListAction(items)
