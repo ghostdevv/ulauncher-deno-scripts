@@ -4,8 +4,13 @@ import hashlib
 import subprocess
 from typing import TypedDict
 from pathlib import Path
-from src.render import render_error, render_message
+from ulauncher.api.shared.action.DoNothingAction import DoNothingAction
+from src.render import render_message
 from urllib.parse import urlparse
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
+import os
 
 DEFAULT_CONFIG_DIR = Path(__file__).parent / "../default-config"
 SCRIPTS_DIR = Path.home() / ".config/ulauncher/deno-scripts"
@@ -83,9 +88,32 @@ class Scripts:
         if file is Path and not file.exists():
             return render_message("Error", f"Script file not found ({script["name"]})")
 
-        try:
-            subprocess.run(["deno", "run", "--no-prompt", file], check=True)
-        except subprocess.CalledProcessError as e:
-            return render_error(str(e))
+        env = os.environ.copy()
+        env.update(
+            {
+                "DENO_NO_PACKAGE_JSON": "1",
+                "DENO_NO_UPDATE_CHECK": "1",
+                "NO_COLOR": "1",
+            }
+        )
 
-        return render_message("Success", f"Script {script['name']} executed")
+        process = subprocess.run(
+            ["deno", "run", "--no-prompt", file],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            env=env,
+        )
+
+        log = process.stdout.strip()
+
+        return RenderResultListAction(
+            [
+                ExtensionResultItem(
+                    icon="images/deno-scripts.png",
+                    name=f"Script {'succeeded' if process.returncode == 0 else f'failed with code {process.returncode}'}",
+                    description=log if log else "No output logged",
+                    on_enter=(CopyToClipboardAction(log) if log else DoNothingAction()),
+                )
+            ]
+        )

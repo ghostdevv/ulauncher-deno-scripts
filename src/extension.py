@@ -35,7 +35,6 @@ class DenoScriptsExtension(Extension):
                     on_enter=ExtensionCustomAction(
                         {
                             "action": "run-script",
-                            "query": query,
                             "script": script["id"],
                         },
                         True,
