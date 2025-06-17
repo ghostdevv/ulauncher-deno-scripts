@@ -51,6 +51,11 @@ class Scripts:
         if not SCRIPTS_DIR.exists():
             shutil.copytree(DEFAULT_CONFIG_DIR, SCRIPTS_DIR)
 
+        shutil.copyfile(
+            DEFAULT_CONFIG_DIR / "config.schema.json",
+            SCRIPTS_DIR / "config.schema.json",
+        )
+
         self.load()
 
     def load(self):
