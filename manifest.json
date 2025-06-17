@@ -1,0 +1,18 @@
+{
+    "required_api_version": "2",
+    "name": "ULauncher Deno Scripts",
+    "description": "todo",
+    "developer_name": "Willow (GHOST)",
+    "icon": "images/deno-scripts.png",
+    "options": {
+        "query_debounce": 0.1
+    },
+    "preferences": [
+        {
+            "id": "deno_scripts_kw",
+            "type": "keyword",
+            "name": "Deno Scripts",
+            "default_value": "ds"
+        }
+    ]
+}
