@@ -1,29 +1,40 @@
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
 from ulauncher.api.client.Extension import Extension
 from ulauncher.api.shared.event import KeywordQueryEvent
 from src.events import KeywordQueryEventListener
+from src.scripts import Scripts
+from src.render import render_message
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
+from ulauncher.api.shared.action.DoNothingAction import DoNothingAction
 
 
 class DenoScriptsExtension(Extension):
+    scripts: Scripts
+
     def __init__(self):
         super().__init__()
+        self.scripts = Scripts()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener(self.render))
         # self.subscribe(ItemEnterEvent, ItemEnterEventListener(self))
         # self.refresh_state()
 
-    def render_error(self, error: str):
+    def render(self, query: str | None):
+        self.scripts.load()
+
+        if self.scripts.scripts is None:
+            return render_message("Error", "No configuration found")
+
+        if len(self.scripts.scripts) == 0:
+            return render_message("No Scripts", "No scripts found")
+
         return RenderResultListAction(
             [
                 ExtensionResultItem(
                     icon="images/deno-scripts.png",
-                    name="An unexpected error occurred",
-                    description="Press enter to copy to clipboard, good luck o7",
-                    on_enter=CopyToClipboardAction(error),
+                    name=script["name"],
+                    description=script["description"],
+                    on_enter=DoNothingAction(),
                 )
+                for script in self.scripts.scripts
             ]
         )
-
-    def render(self, query: str | None):
-        return self.render_error("test")
