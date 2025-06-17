@@ -27,6 +27,9 @@ class DenoScriptsExtension(Extension):
         if len(self.scripts.scripts) == 0:
             return render_message("No Scripts", "No scripts found")
 
+        # todo implement pagination
+        limit = int(self.preferences.get("limit", "9"))
+
         options = [
             ExtensionResultItem(
                 icon="images/deno-scripts.png",
@@ -44,7 +47,7 @@ class DenoScriptsExtension(Extension):
         ]
 
         if not query:
-            return RenderResultListAction(options)
+            return RenderResultListAction(options[:limit])
 
         items: list[ExtensionResultItem] = list(
             fuzzyfinder(
@@ -52,6 +55,6 @@ class DenoScriptsExtension(Extension):
                 options,
                 accessor=lambda item: item.get_name(),
             )
-        )
+        )[:limit]
 
         return RenderResultListAction(items)

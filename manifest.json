@@ -13,6 +13,13 @@
             "type": "keyword",
             "name": "Deno Scripts",
             "default_value": "ds"
+        },
+        {
+            "id": "limit",
+            "type": "text",
+            "name": "Limit",
+            "description": "The number of results to display",
+            "default_value": "9"
         }
     ]
 }
