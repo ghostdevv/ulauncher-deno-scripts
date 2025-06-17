@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Generated schema for Root",
+    "type": "object",
+    "properties": {
+        "scripts": {
+            "type": "array",
+            "description": "The list of Deno Scripts you have",
+            "additionalProperties": false,
+            "items": {
+                "type": "object",
+                "description": "A Deno Script config object",
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "The name of the script"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "A description of the script that will be shown in ulauncher"
+                    },
+                    "file": {
+                        "type": "string",
+                        "description": "The file or URL of the deno script to run"
+                    }
+                },
+                "required": ["name", "description", "file"]
+            }
+        }
+    },
+    "required": ["scripts"]
+}

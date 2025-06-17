@@ -1,0 +1,10 @@
+{
+    "$schema": "./config.schema.json",
+    "scripts": [
+        {
+            "name": "Hello World",
+            "description": "placeholder",
+            "file": "hello-world.ts"
+        }
+    ]
+}
