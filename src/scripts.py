@@ -76,6 +76,7 @@ class Scripts:
             ]
 
     def run(self, script_id: str):
+
         if self.scripts is None:
             return render_message("Error", "No configuration found")
 
@@ -101,6 +102,9 @@ class Scripts:
                 "NO_COLOR": "1",
             }
         )
+
+        if shutil.which("deno") is None:
+            env["PATH"] = f"{env.get("PATH")}{os.pathsep}{Path.home() / '.deno/bin'}"
 
         process = subprocess.run(
             ["deno", "run", "--no-prompt", file],
