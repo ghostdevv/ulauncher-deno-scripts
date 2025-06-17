@@ -1,11 +1,11 @@
 from ulauncher.api.client.Extension import Extension
-from ulauncher.api.shared.event import KeywordQueryEvent
-from src.events import KeywordQueryEventListener
+from ulauncher.api.shared.event import KeywordQueryEvent, ItemEnterEvent
+from src.events import KeywordQueryEventListener, ItemEnterEventListener
 from src.scripts import Scripts
 from src.render import render_message
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.action.DoNothingAction import DoNothingAction
+from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 
 
 class DenoScriptsExtension(Extension):
@@ -15,8 +15,7 @@ class DenoScriptsExtension(Extension):
         super().__init__()
         self.scripts = Scripts()
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener(self.render))
-        # self.subscribe(ItemEnterEvent, ItemEnterEventListener(self))
-        # self.refresh_state()
+        self.subscribe(ItemEnterEvent, ItemEnterEventListener(self.scripts.run))
 
     def render(self, query: str | None):
         self.scripts.load()
@@ -33,7 +32,14 @@ class DenoScriptsExtension(Extension):
                     icon="images/deno-scripts.png",
                     name=script["name"],
                     description=script["description"],
-                    on_enter=DoNothingAction(),
+                    on_enter=ExtensionCustomAction(
+                        {
+                            "action": "run-script",
+                            "query": query,
+                            "script": script["id"],
+                        },
+                        True,
+                    ),
                 )
                 for script in self.scripts.scripts
             ]
