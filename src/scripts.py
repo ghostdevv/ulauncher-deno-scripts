@@ -95,15 +95,12 @@ class Scripts:
             return render_message("Error", f"Script file not found ({script["name"]})")
 
         env = os.environ.copy()
-        env.update(
-            {
-                "DENO_NO_PACKAGE_JSON": "1",
-                "DENO_NO_UPDATE_CHECK": "1",
-                "NO_COLOR": "1",
-            }
-        )
+        env["DENO_NO_PACKAGE_JSON"] = "1"
+        env["DENO_NO_UPDATE_CHECK"] = "1"
+        env["NO_COLOR"] = "1"
 
         if shutil.which("deno") is None:
+            env["DENO_INSTALL"] = str(Path.home() / ".deno")
             env["PATH"] = f"{env.get("PATH")}{os.pathsep}{Path.home() / '.deno/bin'}"
 
         process = subprocess.run(
