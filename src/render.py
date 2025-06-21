@@ -1,7 +1,7 @@
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
-from ulauncher.api.shared.action.DoNothingAction import DoNothingAction
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 
 
 def render_error(error: str):
@@ -24,7 +24,7 @@ def render_message(title: str, description: str):
                 icon="images/deno-scripts.png",
                 name=title,
                 description=description,
-                on_enter=DoNothingAction(),
+                on_enter=HideWindowAction(),
             )
         ]
     )

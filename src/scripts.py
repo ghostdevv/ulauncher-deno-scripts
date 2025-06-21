@@ -4,12 +4,12 @@ import hashlib
 import subprocess
 from typing import TypedDict
 from pathlib import Path
-from ulauncher.api.shared.action.DoNothingAction import DoNothingAction
 from src.render import render_message
 from urllib.parse import urlparse
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
 from ulauncher.api.shared.action.CopyToClipboardAction import CopyToClipboardAction
+from ulauncher.api.shared.action.HideWindowAction import HideWindowAction
 import os
 
 DEFAULT_CONFIG_DIR = Path(__file__).parent / "../default-config"
@@ -119,7 +119,7 @@ class Scripts:
                     icon="images/deno-scripts.png",
                     name=f"Script {'succeeded' if process.returncode == 0 else f'failed with code {process.returncode}'}",
                     description=log if log else "No output logged",
-                    on_enter=(CopyToClipboardAction(log) if log else DoNothingAction()),
+                    on_enter=(CopyToClipboardAction(log) if log else HideWindowAction()),
                 )
             ]
         )
